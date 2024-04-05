@@ -1,18 +1,28 @@
 const { StatusCodes } = require('http-status-codes');
 const NotImplemented = require('../errors/notImplemented.error');
- 
-function pingProblemController(req, res, next) {
+const { ProblemService } = require('../services');
+const { ProblemRepository } = require('../repositories');
+
+const problemRepository = new ProblemRepository();
+const problemService = new ProblemService(problemRepository);
+
+ function pingProblemController(req, res, next) {
     try {
-        return res.json({message: 'Problem controller is up'});
+        return res.json({ message: 'Problem controller is up' });
     } catch (error) {
         next(error);
     }
 }
 
-function addProblem(req, res, next) {
+async function addProblem(req, res, next) {
     try {
-        // nothing implemented
-        throw new NotImplemented('Add Problem');
+        const newProblem = await problemService.createProblem(req.body);
+        return res.status(StatusCodes.CREATED).json({
+            success: 'true',
+            message: 'Successfully created a new problem',
+            data : newProblem,
+            error: {}
+        });
     } catch(error) {
         next(error);
     }
