@@ -6,7 +6,7 @@ const { ProblemRepository } = require('../repositories');
 const problemRepository = new ProblemRepository();
 const problemService = new ProblemService(problemRepository);
 
- function pingProblemController(req, res, next) {
+async function pingProblemController(req, res, next) {
     try {
         return res.json({ message: 'Problem controller is up' });
     } catch (error) {
@@ -23,7 +23,7 @@ async function addProblem(req, res, next) {
             data : newProblem,
             error: {}
         });
-    } catch(error) {
+    } catch (error) {
         next(error);
     }
 }
@@ -67,8 +67,13 @@ async function deleteProblem(req, res, next) {
 
 async function updateProblem(req, res, next) {
     try {
-        // nothing implemented
-        throw new NotImplemented('Update Problem');
+        const problem = await problemService.updateProblem(req.params.id, req.body);
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: 'Successfully updated the problem',
+            data: problem,
+            error: {}
+        });
     } catch (error) {
         next(error);
     }
